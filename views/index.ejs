@@ -1,14 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <%- include('partials/_head.ejs') %>
-  <body>
+<body>
 <%- include('partials/_header.ejs') %>
-    <main role="main" class="container mt-4">
-      <div class="text-center">
-        <h1>budget app</h1>
+  <main role="main" class="container mt-4">
+    <h1 class="mb-4">Transactions</h1>
+    <% if (transactions && transactions.length > 0) { %>
+      <div class="table-responsive">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Post Date</th>
+              <th>Transaction Date</th>
+              <th>Reference Number</th>
+              <th>Merchant Data</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% transactions.forEach(transaction => { %>
+              <tr>
+                <td><%= transaction.postDate.toLocaleDateString() %></td>
+                <td><%= transaction.transactionDate.toLocaleDateString() %></td>
+                <td><%= transaction.referenceNumber %></td>
+                <td><%= transaction.merchantData %></td>
+                <td>$<%= transaction.amount.toFixed(2) %></td>
+              </tr>
+            <% }); %>
+          </tbody>
+        </table>
       </div>
-    </main>
-  </body>
+    <% } else { %>
+      <p>No transactions found. Please upload a CSV file to see transactions.</p>
+    <% } %>
+  </main>
+</body>
 <%- include('partials/_footer.ejs') %>
-  <script src="/js/main.js"></script>
 </html>
