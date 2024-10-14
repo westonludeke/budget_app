@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const express = require("express");
 const session = require("express-session");
 const MongoStore = require('connect-mongo');
+const path = require('path'); // Added to use path module
 const authRoutes = require("./routes/authRoutes");
 const uploadRoutes = require('./routes/uploadRoutes');
 const Transaction = require('./models/Transaction'); // Added to use Transaction model
@@ -76,11 +77,37 @@ app.use(authRoutes);
 // Upload Routes
 app.use(uploadRoutes);
 
-// Root path response updated to fetch transactions and pass them to the view
+// Root path response updated to fetch transactions and pass them to the view with pagination
 app.get("/", async (req, res) => {
   try {
-    const transactions = await Transaction.find().sort({ postDate: -1 });
-    res.render("index", { transactions });
+    const page = parseInt(req.query.page) || 1;
+    const limit = 20;
+    const skip = (page - 1) * limit;
+
+    const totalTransactions = await Transaction.countDocuments();
+    const totalPages = Math.ceil(totalTransactions / limit);
+
+    const transactions = await Transaction.find()
+      .sort({ postDate: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    if (req.xhr) {
+      // If it's an AJAX request, render only the main content
+      return res.render("partials/_transactionList", {
+        transactions,
+        currentPage: page,
+        totalPages,
+        totalTransactions
+      });
+    }
+
+    res.render("index", {
+      transactions,
+      currentPage: page,
+      totalPages,
+      totalTransactions
+    });
   } catch (error) {
     console.error('Error fetching transactions:', error);
     res.status(500).send('Error fetching transactions');

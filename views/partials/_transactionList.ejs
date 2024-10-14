@@ -1,0 +1,44 @@
+<h1 class="mb-4">Transactions</h1>
+<% if (transactions && transactions.length > 0) { %>
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Post Date</th>
+          <th>Transaction Date</th>
+          <th>Reference Number</th>
+          <th>Merchant Data</th>
+          <th>Amount</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% transactions.forEach(transaction => { %>
+          <tr>
+            <td><%= transaction.postDate.toLocaleDateString() %></td>
+            <td><%= transaction.transactionDate.toLocaleDateString() %></td>
+            <td><%= transaction.referenceNumber %></td>
+            <td><%= transaction.merchantData %></td>
+            <td>$<%= transaction.amount.toFixed(2) %></td>
+          </tr>
+        <% }); %>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination controls -->
+  <nav aria-label="Transaction pagination">
+    <ul class="pagination justify-content-center">
+      <% for(let i = 1; i <= totalPages; i++) { %>
+        <li class="page-item <%= currentPage == i ? 'active' : '' %>">
+          <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+        </li>
+      <% } %>
+    </ul>
+  </nav>
+
+  <p class="text-center mt-3">
+    Showing <%= transactions.length %> of <%= totalTransactions %> transactions
+  </p>
+<% } else { %>
+  <p>No transactions found. Please upload a CSV file to see transactions.</p>
+<% } %>
