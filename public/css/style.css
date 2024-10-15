@@ -27,3 +27,9 @@ nav.navbar {
 .table td, .table th {
   vertical-align: middle;
 }
+
+.table input.form-control {
+  width: 100%;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+}

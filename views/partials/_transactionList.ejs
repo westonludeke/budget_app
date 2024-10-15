@@ -1,4 +1,11 @@
 <h1 class="mb-4">Transactions</h1>
+<script>
+  console.log('Transactions data:', JSON.stringify(<%= JSON.stringify(transactions) %>));
+  console.log('Current page:', <%= currentPage %>);
+  console.log('Total pages:', <%= totalPages %>);
+</script>
+<% console.log('Total transactions:', transactions.length); %>
+<% console.log('Current page:', currentPage); %>
 <% if (transactions && transactions.length > 0) { %>
   <div class="table-responsive">
     <table class="table table-striped">
@@ -9,18 +16,34 @@
           <th>Reference Number</th>
           <th>Merchant Data</th>
           <th>Amount</th>
+          <th>Close Date</th>
+          <th>Category</th>
         </tr>
       </thead>
       <tbody>
         <% transactions.forEach(transaction => { %>
+          <% console.log('Rendering transaction:', transaction._id, 'Close Date:', transaction.closeDate, 'Category:', transaction.category); %>
           <tr>
             <td><%= transaction.postDate.toLocaleDateString() %></td>
             <td><%= transaction.transactionDate.toLocaleDateString() %></td>
             <td><%= transaction.referenceNumber %></td>
             <td><%= transaction.merchantData %></td>
             <td>$<%= transaction.amount.toFixed(2) %></td>
+            <td>
+              <input type="text" class="form-control" value="<%= transaction.closeDate || '' %>" placeholder="MM/YYYY">
+            </td>
+            <td>
+              <input type="text" class="form-control" value="<%= transaction.category || '' %>" placeholder="Category">
+            </td>
+            <script>
+              console.log('Transaction <%= transaction._id %>:');
+              console.log('Close Date:', '<%= transaction.closeDate || "Not set" %>');
+              console.log('Category:', '<%= transaction.category || "Not set" %>');
+              console.log('Row HTML:', document.currentScript.parentNode.outerHTML);
+            </script>
           </tr>
         <% }); %>
+        <% console.log('Finished rendering transactions'); %>
       </tbody>
     </table>
   </div>
@@ -35,6 +58,10 @@
       <% } %>
     </ul>
   </nav>
+
+  <script>
+    console.log('Total transactions rendered:', <%= transactions.length %>);
+  </script>
 
   <p class="text-center mt-3">
     Showing <%= transactions.length %> of <%= totalTransactions %> transactions

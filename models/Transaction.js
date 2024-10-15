@@ -6,8 +6,8 @@ const transactionSchema = new mongoose.Schema({
   referenceNumber: String,
   merchantData: String,
   amount: Number,
-  closeDate: String,
-  category: String
+  closeDate: String, // Close Date field added
+  category: String // Category field added
 });
 
 module.exports = mongoose.model('Transaction', transactionSchema);

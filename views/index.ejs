@@ -15,6 +15,8 @@
               <th>Reference Number</th>
               <th>Merchant Data</th>
               <th>Amount</th>
+              <th>Close Date</th>
+              <th>Category</th>
             </tr>
           </thead>
           <tbody>
@@ -25,6 +27,12 @@
                 <td><%= transaction.referenceNumber %></td>
                 <td><%= transaction.merchantData %></td>
                 <td>$<%= transaction.amount.toFixed(2) %></td>
+                <td>
+                  <input type="text" class="form-control" value="<%= transaction.closeDate %>" placeholder="MM/YYYY">
+                </td>
+                <td>
+                  <input type="text" class="form-control" value="<%= transaction.category %>" placeholder="Category">
+                </td>
               </tr>
             <% }); %>
           </tbody>
