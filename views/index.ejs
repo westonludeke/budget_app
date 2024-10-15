@@ -6,47 +6,59 @@
   <main role="main" class="container mt-4">
     <h1 class="mb-4">Transactions</h1>
     <button id="saveChanges" class="btn btn-primary mb-3">Save Changes</button>
-    <% if (transactions && transactions.length > 0) { %>
-      <div class="table-responsive">
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th>Post Date</th>
-              <th>Transaction Date</th>
-              <th>Reference Number</th>
-              <th>Merchant Data</th>
-              <th>Amount</th>
-              <th>Close Date</th>
-              <th>Category</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% transactions.forEach(transaction => { %>
-              <tr>
-                <td><%= transaction.postDate.toLocaleDateString() %></td>
-                <td><%= transaction.transactionDate.toLocaleDateString() %></td>
-                <td><%= transaction.referenceNumber %></td>
-                <td><%= transaction.merchantData %></td>
-                <td>$<%= transaction.amount.toFixed(2) %></td>
-                <td>
-                  <input type="text" class="form-control close-date"
-                         data-id="<%= transaction._id %>"
-                         value="<%= transaction.closeDate || '' %>"
-                         placeholder="MM/YYYY">
-                </td>
-                <td>
-                  <input type="text" class="form-control category"
-                         data-id="<%= transaction._id %>"
-                         value="<%= transaction.category || '' %>"
-                         placeholder="Category">
-                </td>
-              </tr>
-            <% }); %>
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Pagination controls -->
+    <% console.log('Grouped transactions in view:', JSON.stringify(groupedTransactions, null, 2)); %>
+    <% if (Object.keys(groupedTransactions).length > 0) { %>
+      <% Object.keys(groupedTransactions).forEach(closeDate => { %>
+        <div class="card mb-4">
+          <div class="card-header">
+            <h2 class="mb-0">Close Date: <%= closeDate %></h2>
+            <p class="mb-0">Number of Transactions: <%= groupedTransactions[closeDate].count %></p>
+            <p class="mb-0">Total Amount: $<%= groupedTransactions[closeDate].total.toFixed(2) %></p>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Post Date</th>
+                    <th>Transaction Date</th>
+                    <th>Reference Number</th>
+                    <th>Merchant Data</th>
+                    <th>Amount</th>
+                    <th>Category</th>
+                    <th>Close Date</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% groupedTransactions[closeDate].transactions.forEach(transaction => { %>
+                    <% console.log('Rendering transaction:', JSON.stringify(transaction, null, 2)); %>
+                    <tr>
+                      <td><%= transaction.postDate.toLocaleDateString() %></td>
+                      <td><%= transaction.transactionDate.toLocaleDateString() %></td>
+                      <td><%= transaction.referenceNumber %></td>
+                      <td><%= transaction.merchantData %></td>
+                      <td>$<%= transaction.amount.toFixed(2) %></td>
+                      <td>
+                        <input type="text" class="form-control category"
+                               data-id="<%= transaction._id %>"
+                               value="<%= transaction.category || '' %>"
+                               placeholder="Category">
+                      </td>
+                      <td>
+                        <input type="text" class="form-control close-date"
+                               data-id="<%= transaction._id %>"
+                               value="<%= transaction.closeDate || '' %>"
+                               placeholder="MM/YYYY">
+                      </td>
+                    </tr>
+                  <% }); %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      <% }); %>
+      <!-- Pagination controls should be retained for overall navigation, even if not directly applicable to grouped view -->
       <nav aria-label="Transaction pagination">
         <ul class="pagination justify-content-center">
           <% for(let i = 1; i <= totalPages; i++) { %>
@@ -56,15 +68,14 @@
           <% } %>
         </ul>
       </nav>
-
       <p class="text-center mt-3">
-        Showing <%= transactions.length %> of <%= totalTransactions %> transactions
+        Showing <%= totalTransactions %> transactions
       </p>
     <% } else { %>
       <p>No transactions found. Please upload a CSV file to see transactions.</p>
     <% } %>
   </main>
-<script src="/js/transactionUpdate.js"></script>
+  <script src="/js/transactionUpdate.js"></script>
 </body>
 <%- include('partials/_footer.ejs') %>
 </html>

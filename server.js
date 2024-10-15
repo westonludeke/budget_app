@@ -9,6 +9,7 @@ const authRoutes = require("./routes/authRoutes");
 const uploadRoutes = require('./routes/uploadRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
 const Transaction = require('./models/Transaction'); // Added to use Transaction model
+const { isAuthenticated } = require('./routes/middleware/authMiddleware'); // Ensure isAuthenticated is defined
 
 if (!process.env.DATABASE_URL || !process.env.SESSION_SECRET) {
   console.error("Error: config environment variables not set. Please create/edit .env configuration file.");
@@ -81,20 +82,42 @@ app.use(uploadRoutes);
 // Transaction Routes
 app.use('/transactions', transactionRoutes);
 
-// Root path response updated to fetch transactions and pass them to the view with pagination
-app.get("/", async (req, res) => {
+app.get("/", isAuthenticated, async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = 20;
     const skip = (page - 1) * limit;
 
-    const totalTransactions = await Transaction.countDocuments();
-    const totalPages = Math.ceil(totalTransactions / limit);
-
     const transactions = await Transaction.find()
-      .sort({ postDate: -1 })
+      .sort({ closeDate: -1 })
       .skip(skip)
       .limit(limit);
+
+    // Group transactions by closeDate
+    const groupedTransactions = transactions.reduce((acc, transaction) => {
+      let closeDate = 'Uncategorized';
+      if (transaction.closeDate) {
+        closeDate = transaction.closeDate instanceof Date
+          ? transaction.closeDate.toISOString().split('T')[0]
+          : String(transaction.closeDate);
+      }
+      if (!acc[closeDate]) {
+        acc[closeDate] = {
+          transactions: [],
+          count: 0,
+          total: 0
+        };
+      }
+      acc[closeDate].transactions.push(transaction);
+      acc[closeDate].count += 1;
+      acc[closeDate].total += transaction.amount;
+      return acc;
+    }, {});
+
+    const totalTransactions = Object.values(groupedTransactions).reduce((sum, group) => sum + group.count, 0);
+    const totalPages = Math.ceil(totalTransactions / limit);
+
+    console.log('Grouped transactions:', JSON.stringify(groupedTransactions, null, 2));
 
     if (req.xhr) {
       // If it's an AJAX request, render only the main content
@@ -107,13 +130,15 @@ app.get("/", async (req, res) => {
     }
 
     res.render("index", {
-      transactions,
+      user: req.user,
+      groupedTransactions: groupedTransactions,
       currentPage: page,
       totalPages,
       totalTransactions
     });
   } catch (error) {
     console.error('Error fetching transactions:', error);
+    console.error(error.stack);
     res.status(500).send('Error fetching transactions');
   }
 });

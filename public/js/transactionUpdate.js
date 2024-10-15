@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
     })
     .catch(error => {
       console.error('Error updating transaction:', error);
+      console.error(error.stack);
     });
     changedTransactions.add(id);
   }, 500);
@@ -43,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const categoryInput = document.querySelector(`.category[data-id="${id}"]`);
       return {
         id,
-        closeDate: closeDateInput.value,
+        closeDate: closeDateInput ? closeDateInput.value : undefined,
         category: categoryInput.value
       };
     });
