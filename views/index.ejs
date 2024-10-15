@@ -5,6 +5,7 @@
 <%- include('partials/_header.ejs') %>
   <main role="main" class="container mt-4">
     <h1 class="mb-4">Transactions</h1>
+    <button id="saveChanges" class="btn btn-primary mb-3">Save Changes</button>
     <% if (transactions && transactions.length > 0) { %>
       <div class="table-responsive">
         <table class="table table-striped">
@@ -28,10 +29,16 @@
                 <td><%= transaction.merchantData %></td>
                 <td>$<%= transaction.amount.toFixed(2) %></td>
                 <td>
-                  <input type="text" class="form-control" value="<%= transaction.closeDate %>" placeholder="MM/YYYY">
+                  <input type="text" class="form-control close-date"
+                         data-id="<%= transaction._id %>"
+                         value="<%= transaction.closeDate || '' %>"
+                         placeholder="MM/YYYY">
                 </td>
                 <td>
-                  <input type="text" class="form-control" value="<%= transaction.category %>" placeholder="Category">
+                  <input type="text" class="form-control category"
+                         data-id="<%= transaction._id %>"
+                         value="<%= transaction.category || '' %>"
+                         placeholder="Category">
                 </td>
               </tr>
             <% }); %>
@@ -57,6 +64,7 @@
       <p>No transactions found. Please upload a CSV file to see transactions.</p>
     <% } %>
   </main>
+<script src="/js/transactionUpdate.js"></script>
 </body>
 <%- include('partials/_footer.ejs') %>
 </html>

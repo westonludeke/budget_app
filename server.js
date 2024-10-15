@@ -7,6 +7,7 @@ const MongoStore = require('connect-mongo');
 const path = require('path'); // Added to use path module
 const authRoutes = require("./routes/authRoutes");
 const uploadRoutes = require('./routes/uploadRoutes');
+const transactionRoutes = require('./routes/transactionRoutes');
 const Transaction = require('./models/Transaction'); // Added to use Transaction model
 
 if (!process.env.DATABASE_URL || !process.env.SESSION_SECRET) {
@@ -76,6 +77,9 @@ app.use(authRoutes);
 
 // Upload Routes
 app.use(uploadRoutes);
+
+// Transaction Routes
+app.use('/transactions', transactionRoutes);
 
 // Root path response updated to fetch transactions and pass them to the view with pagination
 app.get("/", async (req, res) => {
