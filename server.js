@@ -8,6 +8,7 @@ const path = require('path'); // Added to use path module
 const authRoutes = require("./routes/authRoutes");
 const uploadRoutes = require('./routes/uploadRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
+const reportRoutes = require('./routes/reportRoutes'); // Added to use reportRoutes
 const Transaction = require('./models/Transaction'); // Added to use Transaction model
 const { isAuthenticated } = require('./routes/middleware/authMiddleware'); // Ensure isAuthenticated is defined
 
@@ -81,6 +82,9 @@ app.use(uploadRoutes);
 
 // Transaction Routes
 app.use('/transactions', transactionRoutes);
+
+// Report Routes
+app.use('/reports', reportRoutes); // Using reportRoutes
 
 app.get("/", isAuthenticated, async (req, res) => {
   try {
