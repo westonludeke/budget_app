@@ -4,8 +4,36 @@
 <body>
 <%- include('partials/_header.ejs') %>
   <main role="main" class="container mt-4">
-    <h1 class="mb-4">Reports</h1>
-    <p>This page will display expense reports and breakdowns.</p>
+    <h1 class="mb-4">Expense Reports</h1>
+    <% if (aggregatedData && aggregatedData.length > 0) { %>
+      <% aggregatedData.forEach(month => { %>
+        <div class="card mb-4">
+          <div class="card-header">
+            <h2 class="mb-0"><%= month._id %></h2>
+          </div>
+          <div class="card-body">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% month.categories.forEach(category => { %>
+                  <tr>
+                    <td><%= category.category || 'Uncategorized' %></td>
+                    <td>$<%= category.total.toFixed(2) %></td>
+                  </tr>
+                <% }); %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      <% }); %>
+    <% } else { %>
+      <p>No transaction data available for reporting.</p>
+    <% } %>
   </main>
 <%- include('partials/_footer.ejs') %>
 </body>
