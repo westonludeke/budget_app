@@ -4,13 +4,13 @@ const mongoose = require("mongoose");
 const express = require("express");
 const session = require("express-session");
 const MongoStore = require('connect-mongo');
-const path = require('path'); // Added to use path module
+const path = require('path');
 const authRoutes = require("./routes/authRoutes");
 const uploadRoutes = require('./routes/uploadRoutes');
 const transactionRoutes = require('./routes/transactionRoutes');
-const reportRoutes = require('./routes/reportRoutes'); // Added to use reportRoutes
-const Transaction = require('./models/Transaction'); // Added to use Transaction model
-const { isAuthenticated } = require('./routes/middleware/authMiddleware'); // Ensure isAuthenticated is defined
+const reportRoutes = require('./routes/reportRoutes');
+const Transaction = require('./models/Transaction');
+const { isAuthenticated } = require('./routes/middleware/authMiddleware');
 
 if (!process.env.DATABASE_URL || !process.env.SESSION_SECRET) {
   console.error("Error: config environment variables not set. Please create/edit .env configuration file.");
@@ -20,17 +20,13 @@ if (!process.env.DATABASE_URL || !process.env.SESSION_SECRET) {
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Middleware to parse request bodies
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// Setting the templating engine to EJS
 app.set("view engine", "ejs");
 
-// Serve static files
 app.use(express.static("public"));
 
-// Database connection
 mongoose
   .connect(process.env.DATABASE_URL)
   .then(() => {
@@ -42,7 +38,6 @@ mongoose
     process.exit(1);
   });
 
-// Session configuration with connect-mongo
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -57,10 +52,8 @@ app.on("error", (error) => {
   console.error(error.stack);
 });
 
-// Logging session creation and destruction
 app.use((req, res, next) => {
   const sess = req.session;
-  // Make session available to all views
   res.locals.session = sess;
   if (!sess.views) {
     sess.views = 1;
@@ -74,17 +67,19 @@ app.use((req, res, next) => {
   next();
 });
 
-// Authentication Routes
+// Make user data available to all views
+app.use((req, res, next) => {
+  res.locals.user = req.session.userId ? { id: req.session.userId, username: req.session.username } : null;
+  next();
+});
+
 app.use(authRoutes);
 
-// Upload Routes
 app.use(uploadRoutes);
 
-// Transaction Routes
 app.use('/transactions', transactionRoutes);
 
-// Report Routes
-app.use('/reports', reportRoutes); // Using reportRoutes
+app.use('/reports', reportRoutes);
 
 app.get("/", isAuthenticated, async (req, res) => {
   try {
@@ -97,7 +92,6 @@ app.get("/", isAuthenticated, async (req, res) => {
       .skip(skip)
       .limit(limit);
 
-    // Group transactions by closeDate
     const groupedTransactions = transactions.reduce((acc, transaction) => {
       let closeDate = 'Uncategorized';
       if (transaction.closeDate) {
@@ -124,7 +118,6 @@ app.get("/", isAuthenticated, async (req, res) => {
     console.log('Grouped transactions:', JSON.stringify(groupedTransactions, null, 2));
 
     if (req.xhr) {
-      // If it's an AJAX request, render only the main content
       return res.render("partials/_transactionList", {
         transactions,
         currentPage: page,
@@ -134,7 +127,7 @@ app.get("/", isAuthenticated, async (req, res) => {
     }
 
     res.render("index", {
-      user: req.user,
+      user: res.locals.user,
       groupedTransactions: groupedTransactions,
       currentPage: page,
       totalPages,
@@ -147,12 +140,10 @@ app.get("/", isAuthenticated, async (req, res) => {
   }
 });
 
-// If no routes handled the request, it's a 404
 app.use((req, res, next) => {
   res.status(404).send("Page not found.");
 });
 
-// Error handling
 app.use((err, req, res, next) => {
   console.error(`Unhandled application error: ${err.message}`);
   console.error(err.stack);

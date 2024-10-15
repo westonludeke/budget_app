@@ -33,6 +33,7 @@ router.post('/auth/login', async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (isMatch) {
       req.session.userId = user._id;
+      req.session.username = user.username; // Store username in session
       return res.redirect('/');
     } else {
       return res.status(400).send('Password is incorrect');
@@ -46,7 +47,7 @@ router.post('/auth/login', async (req, res) => {
 router.get('/auth/logout', (req, res) => {
   req.session.destroy(err => {
     if (err) {
-      console.error('Error during session destruction:', err); // gpt_pilot_debugging_log
+      console.error('Error during session destruction:', err);
       return res.status(500).send('Error logging out');
     }
     res.redirect('/auth/login');
