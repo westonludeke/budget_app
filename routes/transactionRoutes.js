@@ -45,4 +45,34 @@ router.put('/update-bulk', isAuthenticated, async (req, res) => {
   }
 });
 
+router.get('/edit/:id', isAuthenticated, async (req, res) => {
+  try {
+    const transaction = await Transaction.findById(req.params.id);
+    if (!transaction) {
+      return res.status(404).send('Transaction not found');
+    }
+    res.render('editTransaction', { transaction });
+  } catch (error) {
+    console.error('Error fetching transaction for edit:', error);
+    res.status(500).send('Error fetching transaction');
+  }
+});
+
+router.put('/edit/:id', isAuthenticated, async (req, res) => {
+  try {
+    const updatedTransaction = await Transaction.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+    if (!updatedTransaction) {
+      return res.status(404).json({ error: 'Transaction not found' });
+    }
+    res.json(updatedTransaction);
+  } catch (error) {
+    console.error('Error updating transaction:', error);
+    res.status(500).json({ error: 'Error updating transaction' });
+  }
+});
+
 module.exports = router;

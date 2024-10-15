@@ -27,6 +27,7 @@
                     <th>Amount</th>
                     <th>Category</th>
                     <th>Close Date</th>
+                    <th>Edit</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -49,6 +50,9 @@
                                data-id="<%= transaction._id %>"
                                value="<%= transaction.closeDate || '' %>"
                                placeholder="MM/YYYY">
+                      </td>
+                      <td>
+                        <button class="btn btn-primary btn-sm edit-transaction" data-id="<%= transaction._id %>">Edit</button>
                       </td>
                     </tr>
                   <% }); %>
@@ -75,7 +79,20 @@
       <p>No transactions found. Please upload a CSV file to see transactions.</p>
     <% } %>
   </main>
+  <div id="editModal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Transaction</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <!-- Form will be loaded here -->
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="/js/editTransaction.js"></script>
   <script src="/js/transactionUpdate.js"></script>
-</body>
 <%- include('partials/_footer.ejs') %>
 </html>

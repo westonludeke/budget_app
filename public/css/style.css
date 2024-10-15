@@ -33,3 +33,11 @@ nav.navbar {
   padding: 0.25rem 0.5rem;
   font-size: 0.875rem;
 }
+
+.modal-dialog {
+  max-width: 500px;
+}
+
+.modal-content {
+  padding: 20px;
+}
