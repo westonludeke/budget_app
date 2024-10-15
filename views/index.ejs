@@ -9,11 +9,11 @@
     <% console.log('Grouped transactions in view:', JSON.stringify(groupedTransactions, null, 2)); %>
     <% if (Object.keys(groupedTransactions).length > 0) { %>
       <% Object.keys(groupedTransactions).forEach(closeDate => { %>
-        <div class="card mb-4">
+        <div class="card mb-4" data-close-date="<%= closeDate %>">
           <div class="card-header">
             <h2 class="mb-0">Close Date: <%= closeDate %></h2>
-            <p class="mb-0">Number of Transactions: <%= groupedTransactions[closeDate].count %></p>
-            <p class="mb-0">Total Amount: $<%= groupedTransactions[closeDate].total.toFixed(2) %></p>
+            <p class="mb-0 transaction-count">Number of Transactions: <%= groupedTransactions[closeDate].count %></p>
+            <p class="mb-0 transaction-total">Total Amount: $<%= groupedTransactions[closeDate].total.toFixed(2) %></p>
           </div>
           <div class="card-body">
             <div class="table-responsive">

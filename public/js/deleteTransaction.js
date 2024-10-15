@@ -15,11 +15,12 @@ document.addEventListener('DOMContentLoaded', function() {
     .then(response => response.json())
     .then(data => {
       if (data.message === 'Transaction deleted successfully') {
-        // Remove the transaction from the DOM
         const row = document.querySelector(`tr[data-id="${id}"]`);
         if (row) {
+          const closeDate = row.closest('.card').getAttribute('data-close-date');
+          const amount = parseFloat(row.querySelector('td:nth-child(5)').textContent.replace('$', ''));
           row.remove();
-          updateGroupTotals();
+          updateGroupTotals(closeDate, amount);
         }
       } else {
         console.error('Error deleting transaction:', data.message);
@@ -31,23 +32,24 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  function updateGroupTotals() {
-    document.querySelectorAll('.card').forEach(card => {
-      const transactions = card.querySelectorAll('tbody tr');
-      const countElement = card.querySelector('p:nth-child(2)');
-      const totalElement = card.querySelector('p:nth-child(3)');
+  function updateGroupTotals(closeDate, amount) {
+    const group = document.querySelector(`.card[data-close-date="${closeDate}"]`);
+    if (group) {
+      const countElement = group.querySelector('.transaction-count');
+      const totalElement = group.querySelector('.transaction-total');
 
-      let count = transactions.length;
-      let total = Array.from(transactions).reduce((sum, tr) => {
-        return sum + parseFloat(tr.querySelector('td:nth-child(5)').textContent.replace('$', ''));
-      }, 0);
+      let count = parseInt(countElement.textContent.split(': ')[1]);
+      let total = parseFloat(totalElement.textContent.split('$')[1]);
+
+      count -= 1;
+      total -= amount;
 
       countElement.textContent = `Number of Transactions: ${count}`;
       totalElement.textContent = `Total Amount: $${total.toFixed(2)}`;
 
       if (count === 0) {
-        card.remove();
+        group.remove();
       }
-    });
+    }
   }
 });

@@ -56,6 +56,9 @@ document.addEventListener('DOMContentLoaded', function() {
   function updateTransactionInTable(transaction) {
     const row = document.querySelector(`tr[data-id="${transaction._id}"]`);
     if (row) {
+      const oldCloseDate = row.closest('.card').querySelector('.card-header h2').textContent.split(': ')[1];
+      const oldAmount = parseFloat(row.querySelector('td:nth-child(5)').textContent.replace('$', ''));
+
       row.querySelector('td:nth-child(1)').textContent = new Date(transaction.postDate).toLocaleDateString();
       row.querySelector('td:nth-child(2)').textContent = new Date(transaction.transactionDate).toLocaleDateString();
       row.querySelector('td:nth-child(3)').textContent = transaction.referenceNumber;
@@ -63,6 +66,38 @@ document.addEventListener('DOMContentLoaded', function() {
       row.querySelector('td:nth-child(5)').textContent = `$${transaction.amount.toFixed(2)}`;
       row.querySelector('td:nth-child(6) input').value = transaction.category;
       row.querySelector('td:nth-child(7) input').value = transaction.closeDate;
+
+      updateGroupTotals(oldCloseDate, oldAmount, transaction.closeDate, transaction.amount);
+    }
+  }
+
+  function updateGroupTotals(oldCloseDate, oldAmount, newCloseDate, newAmount) {
+    const updateGroup = (closeDate, amount, increment) => {
+      const group = document.querySelector(`.card[data-close-date="${closeDate}"]`);
+      if (group) {
+        const countElement = group.querySelector('.transaction-count');
+        const totalElement = group.querySelector('.transaction-total');
+
+        let count = parseInt(countElement.textContent.split(': ')[1]);
+        let total = parseFloat(totalElement.textContent.split('$')[1]);
+
+        count += increment ? 1 : -1;
+        total += increment ? amount : -amount;
+
+        countElement.textContent = `Number of Transactions: ${count}`;
+        totalElement.textContent = `Total Amount: $${total.toFixed(2)}`;
+
+        if (count === 0) {
+          group.remove();
+        }
+      }
+    };
+
+    if (oldCloseDate !== newCloseDate) {
+      updateGroup(oldCloseDate, oldAmount, false);
+      updateGroup(newCloseDate, newAmount, true);
+    } else {
+      updateGroup(newCloseDate, newAmount - oldAmount, false);
     }
   }
 });
