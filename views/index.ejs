@@ -27,13 +27,13 @@
                     <th>Amount</th>
                     <th>Category</th>
                     <th>Close Date</th>
-                    <th>Edit</th>
+                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody>
                   <% groupedTransactions[closeDate].transactions.forEach(transaction => { %>
                     <% console.log('Rendering transaction:', JSON.stringify(transaction, null, 2)); %>
-                    <tr>
+                    <tr data-id="<%= transaction._id %>">
                       <td><%= transaction.postDate.toLocaleDateString() %></td>
                       <td><%= transaction.transactionDate.toLocaleDateString() %></td>
                       <td><%= transaction.referenceNumber %></td>
@@ -53,6 +53,7 @@
                       </td>
                       <td>
                         <button class="btn btn-primary btn-sm edit-transaction" data-id="<%= transaction._id %>">Edit</button>
+                        <button class="btn btn-danger btn-sm delete-transaction" data-id="<%= transaction._id %>">Delete</button>
                       </td>
                     </tr>
                   <% }); %>
@@ -94,5 +95,6 @@
   </div>
   <script src="/js/editTransaction.js"></script>
   <script src="/js/transactionUpdate.js"></script>
+  <script src="/js/deleteTransaction.js"></script>
 <%- include('partials/_footer.ejs') %>
 </html>

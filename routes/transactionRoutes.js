@@ -75,4 +75,20 @@ router.put('/edit/:id', isAuthenticated, async (req, res) => {
   }
 });
 
+router.delete('/delete/:id', isAuthenticated, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const deletedTransaction = await Transaction.findByIdAndDelete(id);
+
+    if (!deletedTransaction) {
+      return res.status(404).json({ message: 'Transaction not found' });
+    }
+
+    res.json({ message: 'Transaction deleted successfully', id });
+  } catch (error) {
+    console.error('Error deleting transaction:', error);
+    res.status(500).json({ message: 'Error deleting transaction' });
+  }
+});
+
 module.exports = router;
