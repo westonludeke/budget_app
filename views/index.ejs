@@ -4,6 +4,9 @@
 <body>
 <%- include('partials/_header.ejs') %>
   <main role="main" class="container mt-4">
+    <% if (user) { %>
+      <h2 class="mb-4">Welcome, <%= user.username %>!</h2>
+    <% } %>
     <h1 class="mb-4">Transactions</h1>
     <button id="saveChanges" class="btn btn-primary mb-3">Save Changes</button>
     <% console.log('Grouped transactions in view:', JSON.stringify(groupedTransactions, null, 2)); %>
@@ -63,7 +66,6 @@
           </div>
         </div>
       <% }); %>
-      <!-- Pagination controls should be retained for overall navigation, even if not directly applicable to grouped view -->
       <nav aria-label="Transaction pagination">
         <ul class="pagination justify-content-center">
           <% for(let i = 1; i <= totalPages; i++) { %>

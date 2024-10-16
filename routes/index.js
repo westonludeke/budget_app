@@ -39,11 +39,12 @@ router.get('/', isAuthenticated, async (req, res) => {
       totalTransactions: transactions.length,
       currentPage: 1,
       totalPages: 1,
-      session: req.session  // Add this line
+      session: req.session,
+      user: req.user  // Add this line to pass user information to the view
     });
   } catch (error) {
     console.error('Error fetching transactions:', error);
-    console.error(error.stack); // Ensure full error trace is logged
+    console.error(error.stack);
     res.status(500).send('Error fetching transactions');
   }
 });
