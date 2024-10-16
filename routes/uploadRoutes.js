@@ -9,7 +9,7 @@ const { isAuthenticated } = require('./middleware/authMiddleware');
 const upload = multer({ dest: 'uploads/' });
 
 router.get('/upload', isAuthenticated, (req, res) => {
-  res.render('upload', { session: req.session });
+  res.render('upload');
 });
 
 router.post('/upload', isAuthenticated, upload.single('csvFile'), async (req, res) => {
@@ -32,8 +32,8 @@ router.post('/upload', isAuthenticated, upload.single('csvFile'), async (req, re
             referenceNumber: row['Reference Number'],
             merchantData: row['Merchant Data'],
             amount: parseFloat(row['Dollar Amount'].replace('$', '').trim()),
-            closeDate: '', // Initialize with an empty string
-            category: '' // Initialize with an empty string
+            closeDate: row['Close Date'] || '', // Handle 'Close Date' field
+            category: row['Category'] || '' // Handle 'Category' field
           });
           await transaction.save();
         }
@@ -41,7 +41,6 @@ router.post('/upload', isAuthenticated, upload.single('csvFile'), async (req, re
         res.redirect('/'); // Redirect to homepage after successful upload
       } catch (error) {
         console.error('Error saving transactions:', error);
-        console.error(error.stack);
         res.status(500).send('Error processing file');
       }
     });
