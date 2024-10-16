@@ -38,10 +38,12 @@ router.get('/', isAuthenticated, async (req, res) => {
       groupedTransactions: sortedGroupedTransactions,
       totalTransactions: transactions.length,
       currentPage: 1,
-      totalPages: 1
+      totalPages: 1,
+      session: req.session  // Add this line
     });
   } catch (error) {
     console.error('Error fetching transactions:', error);
+    console.error(error.stack); // Ensure full error trace is logged
     res.status(500).send('Error fetching transactions');
   }
 });

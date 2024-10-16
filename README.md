@@ -1,80 +1,79 @@
 ```markdown
 # Budget App
 
-Budget App is a personal budget tracker tool designed to track and monitor credit card transactions over time. Users can upload a list of transactions in CSV format to the website, categorize them, and track expenses over time.
+Budget App is a personal budget tracker tool designed to help users track and monitor their credit card transactions over time. Users can upload a list of transactions in CSV format to the website, categorize the transactions, and track their expenses over time.
 
 ## Overview
 
-### Architecture and Technologies
+Budget App is built using the following technologies:
 
-The Budget App is built using the following technologies:
-- **Node.js**: JavaScript runtime for building the server-side of the application.
+- **Node.js**: JavaScript runtime for building server-side applications.
 - **Express**: Web server framework for Node.js.
-- **MongoDB**: NoSQL database for storing user and transaction data.
-- **Mongoose**: ORM for MongoDB, used to define data models.
-- **Multer**: Middleware for handling file uploads.
-- **Body-Parser**: Middleware for parsing request bodies.
-- **EJS**: Templating engine for rendering HTML views.
-- **Bootstrap**: Front-end library for responsive design.
+- **MongoDB**: NoSQL database for storing transaction data.
+- **Mongoose**: ORM for MongoDB.
+- **Multer**: Middleware for handling multipart/form-data, used for file uploads.
+- **Body-Parser**: Middleware for parsing incoming request bodies.
+- **EJS**: Embedded JavaScript templating for rendering dynamic HTML.
+- **Bootstrap**: Front-end component library for responsive design.
 
-### Project Structure
+The project structure is organized as follows:
 
-The project is organized into the following key directories and files:
-- `models/`: Contains Mongoose schemas for `User` and `Transaction`.
-- `routes/`: Defines the application's routes, including authentication, upload, and transaction management.
-- `public/`: Contains static files such as CSS, JavaScript, and uploaded CSV files.
-- `views/`: Contains EJS templates for rendering HTML views.
-- `services/`: Contains service files for interacting with external APIs.
-- `server.js`: Main server file that sets up the Express server and connects to MongoDB.
-- `.env`: Configuration file for environment variables (not included in version control).
-- `.env.example`: Template for setting up environment variables.
-- `.gitignore`: Specifies files and directories to be ignored by Git.
+- `models/`: Contains Mongoose models for User and Transaction.
+- `routes/`: Defines route handlers for authentication, transaction management, file upload, and reporting.
+- `public/`: Contains static assets such as CSS, JavaScript, and images.
+- `views/`: EJS templates for rendering HTML views.
+- `services/`: Contains service logic for interacting with large language models and generating reports.
+- `uploads/`: Directory for storing uploaded CSV files.
+- `server.js`: Main server file that sets up the Express app and connects to MongoDB.
 
 ## Features
 
-The Budget App offers the following core features:
 - **User Authentication**: Session-based authentication using username and password.
-- **Transaction Upload**: Users can upload CSV files containing transactions.
-- **Transaction Management**: Users can view, edit, and delete transactions.
-- **Transaction Categorization**: Users can add categories and close dates to transactions.
-- **Expense Tracking**: Transactions are grouped by close date, and users can track the number and total amount of transactions.
-- **Reporting**: The app provides reports of expenses by category, grouped by each month.
+- **Transaction Upload**: Users can upload CSV files containing transaction data.
+- **Transaction Management**: View, edit, and delete transactions. Add `Close Date` and `Category` to each transaction.
+- **Expense Tracking**: Transactions are grouped by `Close Date`, with summaries of the number of transactions and total amounts.
+- **Reporting**: Generate reports of expenses by category and month. Filter reports by `Close Date`.
+- **Save Changes**: Save button to persist updates to the database.
 
 ## Getting Started
 
 ### Requirements
 
-To run the Budget App locally, you need to have the following technologies installed:
-- **Node.js**: JavaScript runtime.
-- **MongoDB**: NoSQL database. You can use a local instance or a cloud version like MongoDB Atlas.
+To run the project locally, you need to have the following installed on your computer:
+
+- Node.js (https://nodejs.org/)
+- MongoDB (https://www.mongodb.com/) (local installation or cloud version like MongoDB Atlas)
 
 ### Quickstart
 
 1. **Clone the repository**:
-   ```sh
-   git clone <repository_url>
+   ```bash
+   git clone <repository-url>
    cd budget-app
    ```
 
 2. **Install dependencies**:
-   ```sh
+   ```bash
    npm install
    ```
 
 3. **Set up environment variables**:
-   - Create a `.env` file based on the `.env.example` file provided in the repository.
-   - Add your MongoDB connection string, session secret, and other necessary environment variables.
+   - Create a `.env` file in the root directory based on the `.env.example` file.
+   - Fill in the required values such as the port number, MongoDB database URL, and session secret.
 
 4. **Run the application**:
-   ```sh
+   ```bash
    npm start
    ```
 
 5. **Access the application**:
-   - Open your web browser and navigate to `http://localhost:3000`.
+   - Open your web browser and navigate to `http://localhost:<port>` (replace `<port>` with the port number specified in your `.env` file).
 
 ### License
 
 The project is proprietary (not open source). All rights reserved.
 
+```
+© 2024 Budget App.
+```
 ```

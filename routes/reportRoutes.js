@@ -15,18 +15,19 @@ router.get('/', isAuthenticated, async (req, res) => {
       return res.render('partials/_reportContent', {
         aggregatedData,
         closeDate,
-        user: req.session.user
+        session: req.session // Updated to pass session instead of user
       });
     }
 
     res.render('reports', {
-      title: 'Expense Reports',
+      title: 'Reports', // Updated title to 'Reports'
       aggregatedData,
       closeDate,
-      user: req.session.user
+      session: req.session // Updated to pass session instead of user
     });
   } catch (error) {
     console.error('Error fetching report data:', error);
+    console.error(error.stack); // Added error stack logging
     res.status(500).render('error', { message: 'Error generating report' });
   }
 });

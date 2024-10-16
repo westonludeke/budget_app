@@ -9,7 +9,7 @@ const { isAuthenticated } = require('./middleware/authMiddleware');
 const upload = multer({ dest: 'uploads/' });
 
 router.get('/upload', isAuthenticated, (req, res) => {
-  res.render('upload');
+  res.render('upload', { session: req.session });
 });
 
 router.post('/upload', isAuthenticated, upload.single('csvFile'), async (req, res) => {
