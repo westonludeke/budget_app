@@ -27,3 +27,16 @@ nav.navbar {
 .table td, .table th {
   vertical-align: middle;
 }
+
+/* Add some basic styling for the modal */
+.modal-dialog {
+  max-width: 500px;
+}
+
+.modal-content {
+  padding: 20px;
+}
+
+.form-label {
+  font-weight: bold;
+}

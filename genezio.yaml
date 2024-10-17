@@ -1,0 +1,22 @@
+name: id-eb4b1aef-1fbc-47ba-9fba-95c3931eae1d-budget-app
+region: us-east-1
+yamlVersion: 2
+backend:
+  # The root directory of the backend.
+  path: ./
+  language:
+    name: js
+  cloudProvider: genezio-cloud
+  scripts:
+    deploy: npm install
+    local: npm install
+  functions:
+    - name: express-getting-started-function
+      path: ./
+      type: aws
+      handler: handler
+      entry: entryFile
+  environment:
+    PORT: "3000"
+    DATABASE_URL: "mongodb://localhost:27017/budget_app"
+    SESSION_SECRET: "60538ba3c0e9490b8cb165a6216eb73f"

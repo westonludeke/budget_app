@@ -17,11 +17,12 @@
               <th>Amount</th>
               <th>Close Date</th>
               <th>Category</th>
+              <th>Edit</th>
             </tr>
           </thead>
           <tbody>
             <% transactions.forEach(transaction => { %>
-              <tr>
+              <tr data-id="<%= transaction._id %>">
                 <td><%= transaction.postDate.toLocaleDateString() %></td>
                 <td><%= transaction.transactionDate.toLocaleDateString() %></td>
                 <td><%= transaction.referenceNumber %></td>
@@ -40,6 +41,9 @@
                          placeholder="Enter category"
                          data-id="<%= transaction._id %>">
                 </td>
+                <td>
+                  <button class="btn btn-primary btn-sm edit-transaction" data-id="<%= transaction._id %>">Edit</button>
+                </td>
               </tr>
             <% }); %>
           </tbody>
@@ -49,6 +53,55 @@
       <p>No transactions found. Please upload a CSV file to see transactions.</p>
     <% } %>
   </main>
+  <!-- Transaction Edit Modal -->
+<div class="modal fade" id="editTransactionModal" tabindex="-1" aria-labelledby="editTransactionModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="editTransactionModalLabel">Edit Transaction</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editTransactionForm">
+          <input type="hidden" id="transactionId">
+          <div class="mb-3">
+            <label for="postDate" class="form-label">Post Date</label>
+            <input type="date" class="form-control" id="postDate" required>
+          </div>
+          <div class="mb-3">
+            <label for="transactionDate" class="form-label">Transaction Date</label>
+            <input type="date" class="form-control" id="transactionDate" required>
+          </div>
+          <div class="mb-3">
+            <label for="referenceNumber" class="form-label">Reference Number</label>
+            <input type="text" class="form-control" id="referenceNumber" required>
+          </div>
+          <div class="mb-3">
+            <label for="merchantData" class="form-label">Merchant Data</label>
+            <input type="text" class="form-control" id="merchantData" required>
+          </div>
+          <div class="mb-3">
+            <label for="amount" class="form-label">Amount</label>
+            <input type="number" step="0.01" class="form-control" id="amount" required>
+          </div>
+          <div class="mb-3">
+            <label for="closeDate" class="form-label">Close Date</label>
+            <input type="text" class="form-control" id="closeDate" placeholder="MM/YYYY" pattern="\d{2}/\d{4}" required>
+          </div>
+          <div class="mb-3">
+            <label for="category" class="form-label">Category</label>
+            <input type="text" class="form-control" id="category" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary" id="saveTransactionButton">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="/js/transactionEdit.js"></script>
 </body>
 <%- include('partials/_footer.ejs') %>
 </html>

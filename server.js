@@ -6,6 +6,7 @@ const session = require("express-session");
 const MongoStore = require('connect-mongo');
 const authRoutes = require("./routes/authRoutes");
 const uploadRoutes = require('./routes/uploadRoutes');
+const transactionRoutes = require('./routes/transactionRoutes'); // Added to use Transaction routes
 const Transaction = require('./models/Transaction'); // Added to use Transaction model
 
 if (!process.env.DATABASE_URL || !process.env.SESSION_SECRET) {
@@ -70,11 +71,24 @@ app.use((req, res, next) => {
   next();
 });
 
+// Log for all incoming requests including request bodies for POST and PUT
+app.use((req, res, next) => {
+  console.log(`Received ${req.method} request for ${req.url}`);
+  if (req.method === 'POST' || req.method === 'PUT') {
+    console.log('Request body:', req.body);
+  }
+  next();
+});
+
 // Authentication Routes
 app.use(authRoutes);
 
 // Upload Routes
 app.use(uploadRoutes);
+
+// Transaction Routes
+app.use('/transactions', transactionRoutes);
+console.log('Transaction routes registered');
 
 // Root path response updated to fetch transactions and pass them to the view
 app.get("/", async (req, res) => {
