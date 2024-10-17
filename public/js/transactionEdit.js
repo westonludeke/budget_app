@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
       .then(response => response.json())
       .then(data => {
         console.log('Transaction details fetched:', data);
-        populateForm(data);
+        populateModal(data);
         editModal.show();
       })
       .catch(error => {
@@ -39,28 +39,36 @@ document.addEventListener('DOMContentLoaded', function() {
       });
   }
 
-  function populateForm(transaction) {
-    console.log('Populating form with transaction data:', transaction);
+  function populateModal(transaction) {
+    console.log('Populating modal with transaction data:', transaction);
     document.getElementById('transactionId').value = transaction._id;
-    document.getElementById('postDate').value = transaction.postDate.split('T')[0];
-    document.getElementById('transactionDate').value = transaction.transactionDate.split('T')[0];
+    document.getElementById('postDate').value = new Date(transaction.postDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' });
+    document.getElementById('transactionDate').value = new Date(transaction.transactionDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' });
     document.getElementById('referenceNumber').value = transaction.referenceNumber;
     document.getElementById('merchantData').value = transaction.merchantData;
-    document.getElementById('amount').value = transaction.amount;
-    document.getElementById('closeDate').value = transaction.closeDate;
-    document.getElementById('category').value = transaction.category;
+    document.getElementById('amount').value = transaction.amount.toFixed(2);
+    document.getElementById('closeDate').value = transaction.closeDate || '';
+    document.getElementById('category').value = transaction.category || '';
   }
 
   function saveTransactionDetails(id) {
     console.log('Saving transaction details for ID:', id);
 
     // Collect form data manually
+    const postDate = document.getElementById('postDate').value;
+    const transactionDate = document.getElementById('transactionDate').value;
+
+    // Create Date objects from the MM/DD input
+    const currentYear = new Date().getFullYear();
+    const postDateObj = new Date(`${currentYear}-${postDate}`);
+    const transactionDateObj = new Date(`${currentYear}-${transactionDate}`);
+
     const data = {
-      postDate: document.getElementById('postDate').value,
-      transactionDate: document.getElementById('transactionDate').value,
+      postDate: postDateObj.toISOString(),
+      transactionDate: transactionDateObj.toISOString(),
       referenceNumber: document.getElementById('referenceNumber').value,
       merchantData: document.getElementById('merchantData').value,
-      amount: document.getElementById('amount').value,
+      amount: parseFloat(document.getElementById('amount').value),
       closeDate: document.getElementById('closeDate').value,
       category: document.getElementById('category').value
     };
@@ -95,8 +103,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     try {
-      row.querySelector('td:nth-child(1)').textContent = new Date(transaction.postDate).toLocaleDateString();
-      row.querySelector('td:nth-child(2)').textContent = new Date(transaction.transactionDate).toLocaleDateString();
+      row.querySelector('td:nth-child(1)').textContent = new Date(transaction.postDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' });
+      row.querySelector('td:nth-child(2)').textContent = new Date(transaction.transactionDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' });
       row.querySelector('td:nth-child(3)').textContent = transaction.referenceNumber;
       row.querySelector('td:nth-child(4)').textContent = transaction.merchantData;
       row.querySelector('td:nth-child(5)').textContent = `$${parseFloat(transaction.amount).toFixed(2)}`;

@@ -7,6 +7,7 @@ const MongoStore = require('connect-mongo');
 const authRoutes = require("./routes/authRoutes");
 const uploadRoutes = require('./routes/uploadRoutes');
 const transactionRoutes = require('./routes/transactionRoutes'); // Added to use Transaction routes
+const reportRoutes = require('./routes/reportRoutes'); // Added to use Report routes
 
 if (!process.env.DATABASE_URL || !process.env.SESSION_SECRET) {
   console.error("Error: config environment variables not set. Please create/edit .env configuration file.");
@@ -91,6 +92,10 @@ app.use(uploadRoutes);
 app.use('/transactions', transactionRoutes); // Corrected the mount path for transaction routes
 app.use('/', transactionRoutes); // Ensure the root route is also handled by transaction routes
 console.log('Transaction routes set up');
+
+// Report Routes
+app.use('/', reportRoutes);
+console.log('Report routes set up');
 
 // If no routes handled the request, it's a 404
 app.use((req, res, next) => {

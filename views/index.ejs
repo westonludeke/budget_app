@@ -26,8 +26,8 @@
             <tbody>
               <% transactions.forEach(transaction => { %>
                 <tr data-id="<%= transaction._id %>">
-                  <td><%= transaction.postDate.toLocaleDateString() %></td>
-                  <td><%= transaction.transactionDate.toLocaleDateString() %></td>
+                  <td><%= transaction.postDate.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }) %></td>
+                  <td><%= transaction.transactionDate.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' }) %></td>
                   <td><%= transaction.referenceNumber %></td>
                   <td><%= transaction.merchantData %></td>
                   <td>$<%= transaction.amount.toFixed(2) %></td>
@@ -64,11 +64,11 @@
           <input type="hidden" id="transactionId">
           <div class="mb-3">
             <label for="postDate" class="form-label">Post Date</label>
-            <input type="date" class="form-control" id="postDate" required>
+            <input type="text" class="form-control" id="postDate" placeholder="MM/DD" pattern="\d{2}/\d{2}" required>
           </div>
           <div class="mb-3">
             <label for="transactionDate" class="form-label">Transaction Date</label>
-            <input type="date" class="form-control" id="transactionDate" required>
+            <input type="text" class="form-control" id="transactionDate" placeholder="MM/DD" pattern="\d{2}/\d{2}" required>
           </div>
           <div class="mb-3">
             <label for="referenceNumber" class="form-label">Reference Number</label>
