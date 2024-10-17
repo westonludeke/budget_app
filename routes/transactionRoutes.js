@@ -33,7 +33,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.get('/:id', isAuthenticated, async (req, res) => {
+router.get('/:id([0-9a-fA-F]{24})', isAuthenticated, async (req, res) => {
   try {
     console.log('Fetching transaction with ID:', req.params.id);
     const transaction = await Transaction.findById(req.params.id);
