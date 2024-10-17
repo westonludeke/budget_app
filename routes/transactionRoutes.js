@@ -49,7 +49,6 @@ router.get('/:id', isAuthenticated, async (req, res) => {
   }
 });
 
-// Update the existing PUT route to handle all transaction fields
 router.put('/update/:id', isAuthenticated, async (req, res) => {
   console.log('Received update request for transaction:', req.params.id);
   console.log('Request body:', req.body);
@@ -70,6 +69,23 @@ router.put('/update/:id', isAuthenticated, async (req, res) => {
   } catch (error) {
     console.error('Error updating transaction:', error);
     res.status(500).json({ message: 'Error updating transaction', error: error.message });
+  }
+});
+
+router.delete('/:id', isAuthenticated, async (req, res) => {
+  console.log('Received delete request for transaction:', req.params.id);
+  try {
+    const { id } = req.params;
+    const transaction = await Transaction.findByIdAndDelete(id);
+    if (!transaction) {
+      console.log('Transaction not found:', id);
+      return res.status(404).json({ message: 'Transaction not found' });
+    }
+    console.log('Deleted transaction:', transaction);
+    res.json({ message: 'Transaction deleted successfully', transactionId: id });
+  } catch (error) {
+    console.error('Error deleting transaction:', error);
+    res.status(500).json({ message: 'Error deleting transaction', error: error.message });
   }
 });
 

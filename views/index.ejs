@@ -20,7 +20,7 @@
                 <th>Merchant Data</th>
                 <th>Amount</th>
                 <th>Category</th>
-                <th>Edit</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -39,6 +39,7 @@
                   </td>
                   <td>
                     <button class="btn btn-primary btn-sm edit-transaction" data-id="<%= transaction._id %>">Edit</button>
+                    <button class="btn btn-danger btn-sm delete-transaction" data-id="<%= transaction._id %>">Delete</button>
                   </td>
                 </tr>
               <% }); %>
@@ -99,6 +100,7 @@
   </div>
 </div>
 <script src="/js/transactionEdit.js"></script>
+<script src="/js/transactionDelete.js"></script>
 </body>
 <%- include('partials/_footer.ejs') %>
 </html>
