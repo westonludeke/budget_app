@@ -7,7 +7,6 @@ const MongoStore = require('connect-mongo');
 const authRoutes = require("./routes/authRoutes");
 const uploadRoutes = require('./routes/uploadRoutes');
 const transactionRoutes = require('./routes/transactionRoutes'); // Added to use Transaction routes
-const Transaction = require('./models/Transaction'); // Added to use Transaction model
 
 if (!process.env.DATABASE_URL || !process.env.SESSION_SECRET) {
   console.error("Error: config environment variables not set. Please create/edit .env configuration file.");
@@ -80,26 +79,18 @@ app.use((req, res, next) => {
   next();
 });
 
+console.log('Setting up routes...');
 // Authentication Routes
-app.use(authRoutes);
+app.use('/', authRoutes);
+console.log('Auth routes set up');
 
 // Upload Routes
 app.use(uploadRoutes);
 
 // Transaction Routes
-app.use('/transactions', transactionRoutes);
-console.log('Transaction routes registered');
-
-// Root path response updated to fetch transactions and pass them to the view
-app.get("/", async (req, res) => {
-  try {
-    const transactions = await Transaction.find().sort({ postDate: -1 });
-    res.render("index", { transactions });
-  } catch (error) {
-    console.error('Error fetching transactions:', error);
-    res.status(500).send('Error fetching transactions');
-  }
-});
+app.use('/transactions', transactionRoutes); // Corrected the mount path for transaction routes
+app.use('/', transactionRoutes); // Ensure the root route is also handled by transaction routes
+console.log('Transaction routes set up');
 
 // If no routes handled the request, it's a 404
 app.use((req, res, next) => {

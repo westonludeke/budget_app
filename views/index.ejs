@@ -5,50 +5,47 @@
 <%- include('partials/_header.ejs') %>
   <main role="main" class="container mt-4">
     <h1 class="mb-4">Transactions</h1>
-    <% if (transactions && transactions.length > 0) { %>
-      <div class="table-responsive">
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th>Post Date</th>
-              <th>Transaction Date</th>
-              <th>Reference Number</th>
-              <th>Merchant Data</th>
-              <th>Amount</th>
-              <th>Close Date</th>
-              <th>Category</th>
-              <th>Edit</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% transactions.forEach(transaction => { %>
-              <tr data-id="<%= transaction._id %>">
-                <td><%= transaction.postDate.toLocaleDateString() %></td>
-                <td><%= transaction.transactionDate.toLocaleDateString() %></td>
-                <td><%= transaction.referenceNumber %></td>
-                <td><%= transaction.merchantData %></td>
-                <td>$<%= transaction.amount.toFixed(2) %></td>
-                <td>
-                  <input type="text" class="form-control close-date"
-                         value="<%= transaction.closeDate %>"
-                         placeholder="MM/YYYY"
-                         pattern="\d{2}/\d{4}"
-                         data-id="<%= transaction._id %>">
-                </td>
-                <td>
-                  <input type="text" class="form-control category"
-                         value="<%= transaction.category %>"
-                         placeholder="Enter category"
-                         data-id="<%= transaction._id %>">
-                </td>
-                <td>
-                  <button class="btn btn-primary btn-sm edit-transaction" data-id="<%= transaction._id %>">Edit</button>
-                </td>
+    <% if (transactionGroups && transactionGroups.length > 0) { %>
+      <% transactionGroups.forEach(([closeDate, transactions]) => { %>
+        <h2 class="mt-4"><%= closeDate %></h2>
+        <p>Number of Transactions: <%= transactions.length %></p>
+        <p>Total: $<%= transactions.reduce((sum, t) => sum + t.amount, 0).toFixed(2) %></p>
+        <div class="table-responsive">
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Post Date</th>
+                <th>Transaction Date</th>
+                <th>Reference Number</th>
+                <th>Merchant Data</th>
+                <th>Amount</th>
+                <th>Category</th>
+                <th>Edit</th>
               </tr>
-            <% }); %>
-          </tbody>
-        </table>
-      </div>
+            </thead>
+            <tbody>
+              <% transactions.forEach(transaction => { %>
+                <tr data-id="<%= transaction._id %>">
+                  <td><%= transaction.postDate.toLocaleDateString() %></td>
+                  <td><%= transaction.transactionDate.toLocaleDateString() %></td>
+                  <td><%= transaction.referenceNumber %></td>
+                  <td><%= transaction.merchantData %></td>
+                  <td>$<%= transaction.amount.toFixed(2) %></td>
+                  <td>
+                    <input type="text" class="form-control category"
+                           value="<%= transaction.category %>"
+                           placeholder="Enter category"
+                           data-id="<%= transaction._id %>">
+                  </td>
+                  <td>
+                    <button class="btn btn-primary btn-sm edit-transaction" data-id="<%= transaction._id %>">Edit</button>
+                  </td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      <% }); %>
     <% } else { %>
       <p>No transactions found. Please upload a CSV file to see transactions.</p>
     <% } %>

@@ -78,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
     .then(data => {
       console.log('Transaction update success:', data);
       editModal.hide();
-      updateTransactionRow(id, data.transaction);
+      updateTransactionRow(data.transaction);
     })
     .catch((error) => {
       console.error('Error updating transaction:', error);
@@ -86,16 +86,23 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  function updateTransactionRow(id, transaction) {
-    const row = document.querySelector(`tr[data-id="${id}"]`);
-    if (row) {
+  function updateTransactionRow(transaction) {
+    console.log('Updating transaction row with data:', transaction);
+    const row = document.querySelector(`tr[data-id="${transaction._id}"]`);
+    if (!row) {
+      console.error(`Row not found for transaction ID: ${transaction._id}`);
+      return;
+    }
+
+    try {
       row.querySelector('td:nth-child(1)').textContent = new Date(transaction.postDate).toLocaleDateString();
       row.querySelector('td:nth-child(2)').textContent = new Date(transaction.transactionDate).toLocaleDateString();
       row.querySelector('td:nth-child(3)').textContent = transaction.referenceNumber;
       row.querySelector('td:nth-child(4)').textContent = transaction.merchantData;
-      row.querySelector('td:nth-child(5)').textContent = `$${transaction.amount.toFixed(2)}`;
-      row.querySelector('td:nth-child(6) input').value = transaction.closeDate;
-      row.querySelector('td:nth-child(7) input').value = transaction.category;
+      row.querySelector('td:nth-child(5)').textContent = `$${parseFloat(transaction.amount).toFixed(2)}`;
+      row.querySelector('td:nth-child(6) input').value = transaction.category;
+    } catch (error) {
+      console.error('Error updating row:', error);
     }
   }
 });
