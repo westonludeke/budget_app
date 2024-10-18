@@ -11,7 +11,7 @@ router.get('/', async (req, res) => {
 
     console.log('Grouping transactions...');
     const groupedTransactions = transactions.reduce((groups, transaction) => {
-      const closeDate = transaction.closeDate || 'Uncategorized';
+      const closeDate = transaction.closeDate === "01/2000" ? "No Date" : (transaction.closeDate || 'Uncategorized');
       if (!groups[closeDate]) {
         groups[closeDate] = [];
       }
@@ -22,7 +22,11 @@ router.get('/', async (req, res) => {
 
     console.log('Sorting grouped transactions...');
     const sortedGroups = Object.entries(groupedTransactions)
-      .sort(([a], [b]) => new Date(b.split('/').reverse().join('-')) - new Date(a.split('/').reverse().join('-')));
+      .sort(([a], [b]) => {
+        if (a === "No Date") return 1;
+        if (b === "No Date") return -1;
+        return new Date(b.split('/').reverse().join('-')) - new Date(a.split('/').reverse().join('-'));
+      });
     console.log('Sorted groups:', sortedGroups.map(([closeDate, transactions]) => ({ closeDate, count: transactions.length })));
 
     console.log('Rendering index page with transactionGroups...');
