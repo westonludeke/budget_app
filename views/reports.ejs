@@ -7,30 +7,38 @@
     <h1 class="mb-4">Expense Reports</h1>
     <% if (aggregatedData && aggregatedData.length > 0) { %>
       <% aggregatedData.forEach(month => { %>
-        <h2><%= month._id %></h2>
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th>Category</th>
-              <th>Total</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% month.categories.forEach(category => { %>
-              <tr>
-                <td><%= category.category || 'Uncategorized' %></td>
-                <td>$<%= category.total.toFixed(2) %></td>
-              </tr>
-            <% }); %>
-            <tr class="table-info">
-              <td><strong>Month Total</strong></td>
-              <td><strong>$<%= month.monthTotal.toFixed(2) %></strong></td>
-            </tr>
-          </tbody>
-        </table>
+        <div class="card mb-4">
+          <div class="card-header">
+            <h2 class="mb-0"><%= month._id %></h2>
+          </div>
+          <div class="card-body">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% month.categories.forEach(category => { %>
+                  <tr>
+                    <td><%= category.category || 'Uncategorized' %></td>
+                    <td>$<%= category.total.toFixed(2) %></td>
+                  </tr>
+                <% }); %>
+                <tr class="table-info">
+                  <td><strong>Month Total</strong></td>
+                  <td><strong>$<%= month.monthTotal.toFixed(2) %></strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       <% }); %>
     <% } else { %>
-      <p>No transaction data available for reporting.</p>
+      <div class="alert alert-info" role="alert">
+        No transaction data available for reporting.
+      </div>
     <% } %>
   </main>
 <%- include('partials/_footer.ejs') %>
