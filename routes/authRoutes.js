@@ -1,6 +1,7 @@
 const express = require('express');
 const User = require('../models/User');
 const bcrypt = require('bcrypt');
+const Transaction = require('../models/Transaction');
 const router = express.Router();
 
 router.get('/auth/register', (req, res) => {
@@ -46,11 +47,41 @@ router.post('/auth/login', async (req, res) => {
 router.get('/auth/logout', (req, res) => {
   req.session.destroy(err => {
     if (err) {
-      console.error('Error during session destruction:', err); // gpt_pilot_debugging_log
+      console.error('Error during session destruction:', err);
       return res.status(500).send('Error logging out');
     }
     res.redirect('/auth/login');
   });
+});
+
+router.get('/', async (req, res) => {
+  try {
+    let user = null;
+    if (req.session && req.session.userId) {
+      user = await User.findById(req.session.userId);
+    }
+
+    // Fetch all transactions
+    const transactions = await Transaction.find().sort({ closeDate: -1 });
+
+    // Group transactions by closeDate
+    const transactionGroups = transactions.reduce((groups, transaction) => {
+      const closeDate = transaction.closeDate || 'No Date';
+      if (!groups[closeDate]) {
+        groups[closeDate] = [];
+      }
+      groups[closeDate].push(transaction);
+      return groups;
+    }, {});
+
+    // Convert to array of [closeDate, transactions] pairs
+    const groupedTransactions = Object.entries(transactionGroups);
+
+    res.render('index', { user: user, transactionGroups: groupedTransactions });
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    res.status(500).send('An error occurred');
+  }
 });
 
 module.exports = router;
