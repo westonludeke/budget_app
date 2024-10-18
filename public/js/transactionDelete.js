@@ -13,18 +13,26 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 
   function deleteTransaction(id) {
-    console.log('Deleting transaction:', id);
+    console.log('Attempting to delete transaction:', id);
     fetch(`/transactions/${id}`, {
       method: 'DELETE',
     })
-    .then(response => response.json())
+    .then(response => {
+      if (response.status === 401) {
+        throw new Error('Unauthorized');
+      }
+      return response.json();
+    })
     .then(data => {
       console.log('Transaction delete success:', data);
       removeTransactionFromView(id);
     })
     .catch((error) => {
-      console.error('Error deleting transaction:', error);
-      alert('Error deleting transaction. Please check the console for more information.');
+      if (error.message === 'Unauthorized') {
+        alert('You are not authenticated. Please log in to delete transactions.');
+      } else {
+        console.error('Error deleting transaction:', error);
+      }
     });
   }
 

@@ -9,7 +9,25 @@ document.addEventListener('DOMContentLoaded', function() {
     if (event.target.classList.contains('edit-transaction')) {
       const transactionId = event.target.getAttribute('data-id');
       console.log('Edit button clicked for transaction:', transactionId);
-      fetchTransactionDetails(transactionId);
+      fetch(`/transactions/${transactionId}`)
+        .then(response => {
+          if (response.status === 401) {
+            throw new Error('Unauthorized');
+          }
+          return response.json();
+        })
+        .then(data => {
+          console.log('Transaction details fetched:', data);
+          populateModal(data);
+          editModal.show();
+        })
+        .catch(error => {
+          if (error.message === 'Unauthorized') {
+            alert('You are not authenticated. Please log in to edit transactions.');
+          } else {
+            console.error('Error fetching transaction details:', error);
+          }
+        });
     }
   });
 
@@ -20,24 +38,52 @@ document.addEventListener('DOMContentLoaded', function() {
       console.log('Save button clicked');
       const transactionId = document.getElementById('transactionId').value;
       console.log('Transaction ID:', transactionId);
-      saveTransactionDetails(transactionId);
-    }
-  });
 
-  function fetchTransactionDetails(id) {
-    console.log('Fetching transaction details for ID:', id);
-    fetch(`/transactions/${id}`)
-      .then(response => response.json())
+      const updatedData = {
+        postDate: document.getElementById('postDate').value,
+        transactionDate: document.getElementById('transactionDate').value,
+        referenceNumber: document.getElementById('referenceNumber').value,
+        merchantData: document.getElementById('merchantData').value,
+        amount: parseFloat(document.getElementById('amount').value),
+        closeDate: document.getElementById('closeDate').value,
+        category: document.getElementById('category').value
+      };
+
+      // Create Date objects from the MM/DD input
+      const currentYear = new Date().getFullYear();
+      const postDateObj = new Date(`${currentYear}-${updatedData.postDate}`);
+      const transactionDateObj = new Date(`${currentYear}-${updatedData.transactionDate}`);
+
+      updatedData.postDate = postDateObj.toISOString();
+      updatedData.transactionDate = transactionDateObj.toISOString();
+
+      fetch(`/transactions/update/${transactionId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedData)
+      })
+      .then(response => {
+        if (response.status === 401) {
+          throw new Error('Unauthorized');
+        }
+        return response.json();
+      })
       .then(data => {
-        console.log('Transaction details fetched:', data);
-        populateModal(data);
-        editModal.show();
+        console.log('Transaction update success:', data);
+        editModal.hide();
+        updateTransactionRow(data.transaction);
       })
       .catch(error => {
-        console.error('Error fetching transaction details:', error);
-        alert('Error fetching transaction details. Please check the console for more information.');
+        if (error.message === 'Unauthorized') {
+          alert('You are not authenticated. Please log in to save changes.');
+        } else {
+          console.error('Error updating transaction:', error);
+        }
       });
-  }
+    }
+  });
 
   function populateModal(transaction) {
     console.log('Populating modal with transaction data:', transaction);
@@ -49,49 +95,6 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('amount').value = transaction.amount.toFixed(2);
     document.getElementById('closeDate').value = transaction.closeDate || '';
     document.getElementById('category').value = transaction.category || '';
-  }
-
-  function saveTransactionDetails(id) {
-    console.log('Saving transaction details for ID:', id);
-
-    // Collect form data manually
-    const postDate = document.getElementById('postDate').value;
-    const transactionDate = document.getElementById('transactionDate').value;
-
-    // Create Date objects from the MM/DD input
-    const currentYear = new Date().getFullYear();
-    const postDateObj = new Date(`${currentYear}-${postDate}`);
-    const transactionDateObj = new Date(`${currentYear}-${transactionDate}`);
-
-    const data = {
-      postDate: postDateObj.toISOString(),
-      transactionDate: transactionDateObj.toISOString(),
-      referenceNumber: document.getElementById('referenceNumber').value,
-      merchantData: document.getElementById('merchantData').value,
-      amount: parseFloat(document.getElementById('amount').value),
-      closeDate: document.getElementById('closeDate').value,
-      category: document.getElementById('category').value
-    };
-
-    console.log('Form data being sent:', data);
-
-    fetch(`/transactions/update/${id}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data),
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log('Transaction update success:', data);
-      editModal.hide();
-      updateTransactionRow(data.transaction);
-    })
-    .catch((error) => {
-      console.error('Error updating transaction:', error);
-      alert('Error updating transaction. Please check the console for more information.');
-    });
   }
 
   function updateTransactionRow(transaction) {
