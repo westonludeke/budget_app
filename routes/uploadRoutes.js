@@ -34,7 +34,7 @@ router.post('/upload', isAuthenticated, upload.single('file'), (req, res) => {
           referenceNumber: row['Reference Number'],
           merchantData: row['Merchant Data'],
           amount: parseFloat(row['Dollar Amount'].replace('$', '').trim()),
-          closeDate: row['Close Date'] ? row['Close Date'] : '01/2000', // Set a default value if not present
+          closeDate: row['Close Date'] ? row['Close Date'] : 'No Date', // Updated default value
           category: row['Category'] ? row['Category'] : '' // Set an empty string as default if not present
         }));
 

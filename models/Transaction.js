@@ -10,9 +10,9 @@ const transactionSchema = new mongoose.Schema({
     type: String,
     validate: {
       validator: function(v) {
-        return /^(0[1-9]|1[0-2])\/\d{4}$/.test(v);
+        return v === 'No Date' || /^(0[1-9]|1[0-2])\/\d{4}$/.test(v);
       },
-      message: props => `${props.value} is not a valid close date! Use format MM/YYYY.`
+      message: props => `${props.value} is not a valid close date! Use format MM/YYYY or "No Date".`
     }
   },
   category: {
