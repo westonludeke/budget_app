@@ -1,4 +1,3 @@
-```markdown
 # Budget App
 
 Budget App is a personal budget tracker tool designed to track and monitor credit card transactions over time. Users can upload a list of transactions in CSV format, categorize them, and track expenses over time.
@@ -70,7 +69,6 @@ Budget App is built using the following technologies:
 5. **Access the application**:
    - Open your web browser and navigate to `http://localhost:<PORT>` (replace `<PORT>` with the port number specified in your `.env` file).
 
-### License
+## License
 
-The project is proprietary (not open source). Copyright (c) 2024.
-```
+This project is open source and licensed under the MIT License. You are free to fork, modify, distribute, and use this project.
