@@ -72,6 +72,5 @@ Budget App is built using the following technologies:
 
 ### License
 
-The project is proprietary (not open source).  
-&copy; 2024.
+The project is proprietary (not open source). Copyright (c) 2024.
 ```
